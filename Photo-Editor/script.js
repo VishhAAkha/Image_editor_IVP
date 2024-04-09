@@ -1,5 +1,5 @@
 
-onload = function () {
+window.onload = function () {
     const editor = document.getElementById("editor");
     const context = editor.getContext("2d");
     const toolbar = document.getElementById("toolbar");
@@ -163,14 +163,66 @@ onload = function () {
                 }
             }
             setImageData(image, rows, cols);
-        }
+        },
+
+        "negate": function () {
+            let cols = editor.width;
+            let rows = editor.height;
+            let image = getRGBArray(rows, cols);
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    for (let k = 0; k < 3; k++) {
+                        image[i][j][k] = 255 - image[i][j][k]; // Negate each channel
+                    }
+                }
+            }
+            setImageData(image, rows, cols);
+        },
+
+        "brighten": function () {
+            let cols = editor.width;
+            let rows = editor.height;
+            let image = getRGBArray(rows, cols);
+
+            const factor = 1.2; // Brightening factor
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    for (let k = 0; k < 3; k++) {
+                        image[i][j][k] = Math.min(255, image[i][j][k] * factor); // Brighten each channel
+                    }
+                }
+            }
+            setImageData(image, rows, cols);
+        },
+
+        "darken": function () {
+            let cols = editor.width;
+            let rows = editor.height;
+            let image = getRGBArray(rows, cols);
+
+            const factor = 0.8; // Darkening factor
+
+            for (let i = 0; i < rows; i++) {
+                for (let j = 0; j < cols; j++) {
+                    for (let k = 0; k < 3; k++) {
+                        image[i][j][k] = Math.max(0, image[i][j][k] * factor); // Darken each channel
+                    }
+                }
+            }
+            setImageData(image, rows, cols);
+        },
+
+
     };
 
+    // Bind click event to toolbar buttons
     for (let button of toolbar.children) {
         if (button.nodeName === "BUTTON") {
             button.onclick = function (event) {
                 event.preventDefault();
-                tools[this.id].call(this);
+                tools[this.id]();
             }
         }
     }
@@ -217,4 +269,14 @@ onload = function () {
         }
         return RGBImage;
     }
+
+  // Bind click event to toolbar buttons
+  for (let button of toolbar.children) {
+    if (button.nodeName === "BUTTON") {
+        button.onclick = function (event) {
+            event.preventDefault();
+            tools[this.id]();
+        }
+    }
+}
 };
